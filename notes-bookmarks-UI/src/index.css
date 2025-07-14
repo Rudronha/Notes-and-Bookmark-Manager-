@@ -1,0 +1,26 @@
+/* Tailwind base layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Body base styles */
+body {
+  @apply bg-gray-100 text-gray-900 font-sans;
+}
+
+/* ✅ Custom scrollbar (use plain CSS here) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Tailwind's bg-slate-300 hex */
+  border-radius: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  @apply px-3 py-2 rounded border hover:bg-slate-100;
+}
+.btn-primary {
+  @apply px-3 py-2 bg-blue-600 text-white hover:bg-blue-700;
+}
