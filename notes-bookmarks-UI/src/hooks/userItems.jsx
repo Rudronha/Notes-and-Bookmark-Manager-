@@ -58,6 +58,7 @@ export default function useItems() {
   }, []);
 
   const deleteNote = useCallback(async id => {
+    console.log(id)
     await api.delete(`/notes/${id}`);
     setNotes(prev => prev.filter(n => n._id !== id));
   }, []);

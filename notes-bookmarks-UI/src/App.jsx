@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-import Sidebar    from './components/Sidebar';
-import Header     from './components/Header';
-import SearchBar  from './components/SearchBar';
-import Drawer     from './components/Drawer';
-import NoteCard   from './components/NoteCard';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import SearchBar from './components/SearchBar';
+import Drawer from './components/Drawer';
+import NoteCard from './components/NoteCard';
 import BookmarkCard from './components/BookmarkCard';
-import useItems   from './hooks/userItems';
+import useItems from './hooks/userItems';        // ✅ correct file name
 
 export default function App() {
   return (
@@ -18,14 +18,79 @@ export default function App() {
 }
 
 function InnerApp() {
-  const [drawer, setDrawer] = useState(null);
+  const [drawer, setDrawer] = useState(null);     // 'new-note' | 'edit-note' | 'new-bm' | 'edit-bm'
+  const [editing, setEditing] = useState(null);   // record being edited
   const [search, setSearch] = useState('');
-  const { notes, bookmarks, addNote, addBookmark } = useItems();
 
+  const {
+    notes,
+    bookmarks,
+    addNote,
+    addBookmark,
+    updateNote,
+    updateBookmark,
+    deleteNote,
+    deleteBookmark
+  } = useItems();
+
+  /* ---------- helpers ---------- */
+  const openNewNote      = () => setDrawer('new-note');
+  const openNewBookmark  = () => setDrawer('new-bm');
+
+  const openEditNote = note => {
+    setEditing(note);
+    setDrawer('edit-note');
+  };
+
+  const requestDeleteNote = id => {
+    if (window.confirm('Delete this Note permanently?')) {
+      deleteNote(id);
+    }
+  };
+
+  const openEditBookmark = bm => {
+    setEditing(bm);
+    setDrawer('edit-bm');
+  };
+
+  const requestDeleteBm = id => {
+    if (window.confirm('Delete this bookmark permanently?')) {
+      deleteBookmark(id);
+    }
+  };
+
+  const closeDrawer = () => {
+    setDrawer(null);
+    setEditing(null);
+  };
+
+  const handleSave = data => {
+    switch (drawer) {
+      case 'new-note':
+        addNote(data);
+        break;
+      case 'edit-note':
+        updateNote(editing._id, data);
+        break;
+      case 'new-bm':
+        addBookmark(data);
+        break;
+      case 'edit-bm':
+        updateBookmark(editing._id, data);
+        break;
+      default:
+    }
+    closeDrawer();
+  };
+
+  /* ---------- UI ---------- */
   return (
     <div className="h-screen flex flex-col">
-      {/* Header now contains navigation links */}
-      <Header openDrawer={setDrawer} />
+      <Header
+        openDrawer={type => {
+          type === 'note' ? openNewNote() : openNewBookmark();
+        }}
+      />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
@@ -34,45 +99,62 @@ function InnerApp() {
           <SearchBar value={search} onChange={setSearch} />
 
           <Routes>
+            {/* Notes page */}
             <Route
               path="/notes"
               element={
                 <Section title="Notes">
                   {notes
                     .filter(n => matches(n, search))
-                    .map(n => <NoteCard key={n.id} note={n} />)}
+                    .map(n => (
+                      <NoteCard
+                        key={n._id}
+                        note={n}
+                        onEdit={openEditNote}
+                        onDelete={() => requestDeleteNote(n._id)}
+                      />
+                    ))}
                 </Section>
               }
             />
+
+            {/* Bookmarks page */}
             <Route
               path="/bookmarks"
               element={
                 <Section title="Bookmarks">
                   {bookmarks
                     .filter(b => matches(b, search))
-                    .map(b => <BookmarkCard key={b.id} bm={b} />)}
+                    .map(b => (
+                      <BookmarkCard
+                        key={b._id}
+                        bm={b}
+                        onEdit={openEditBookmark}
+                        onDelete={() => requestDeleteBm(b._id)}
+                      />
+                    ))}
                 </Section>
               }
             />
-            {/* fallback → redirect to /notes */}
+
+            {/* fallback → /notes */}
             <Route path="*" element={<RedirectToNotes />} />
           </Routes>
         </main>
       </div>
 
       <Drawer
-        mode={drawer}
-        onClose={() => setDrawer(null)}
-        onSave={data => {
-          drawer === 'note' ? addNote(data) : addBookmark(data);
-          setDrawer(null);
-        }}
+        mode={drawer}          // controls new/edit + note/bookmark
+        editing={editing}      // record to pre‑fill (or undefined)
+        onClose={closeDrawer}
+        onSave={handleSave}
       />
     </div>
   );
 }
 
-/* keeps your existing Section + matches helpers */
+/* ---------- helpers ---------- */
+
 function Section({ title, children }) {
   return (
     <section>
@@ -88,13 +170,10 @@ function matches(item, term) {
   if (!term.trim()) return true;
   const t = term.toLowerCase();
   return Object.values(item).some(
-    v => typeof v === 'string' && v.toLowerCase().includes(t),
+    v => typeof v === 'string' && v.toLowerCase().includes(t)
   );
 }
 
-/* redirect component */
 function RedirectToNotes() {
-  const navigate = useNavigate();
-  navigate('/notes', { replace: true });
-  return null;
+  return <Navigate to="/notes" replace />;
 }
