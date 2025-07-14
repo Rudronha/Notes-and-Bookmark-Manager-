@@ -21,7 +21,7 @@ Built with **React + Vite + Tailwind CSS** on the front‑end and **Node.js�
 
 ```bash
 git clone <repo>
-cd backend          && npm i            # API deps
+cd api                   && npm i            # API deps
 cd ../notes-bookmarks-ui && npm i       # UI deps
 ```
 
