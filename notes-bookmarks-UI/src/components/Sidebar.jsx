@@ -17,7 +17,7 @@ export default function Sidebar() {
       {/* ▸ Toggle button – visible only below lg */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-16 left-2 z-40 flex lg:hidden h-8 w-8 items-center justify-center
+        className="fixed top-10 left-0 z-40 flex lg:hidden h-8 w-8 items-center justify-center
               rounded-full bg-white shadow border hover:bg-slate-50"
         aria-label="Open sidebar"
       >
@@ -36,13 +36,13 @@ export default function Sidebar() {
             />
             {/* panel */}
             <motion.aside
-              className="fixed inset-y-0 left-0 w-64 bg-white p-6 z-40 flex flex-col space-y-2 overflow-y-auto lg:hidden"
+              className="fixed inset-y-0 left-0 w-64 bg-white p-10 z-40 flex flex-col space-y-2 overflow-y-auto lg:hidden"
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
             >
               {/* close button */}
               <button
                 onClick={() => setOpen(false)}
-                className="mb-4 flex h-8 w-8 items-center justify-center rounded-full border hover:bg-slate-100"
+                className="fixed top-10 left-0 z-40 mb-4 flex h-8 w-8 items-center justify-center rounded-full border hover:bg-slate-100"
                 aria-label="Close sidebar"
               >
                 <ChevronLeft size={20} />
