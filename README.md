@@ -9,7 +9,7 @@ Built with **React + Vite + Tailwind CSS** on the front‑end and **Node.js�
 
 ```txt
 /.
-├─ backend/          # Express REST API
+├─ api/          # Express REST API
 └─ notes-bookmarks-ui/  # Vite + React + Tailwind app
 ```
 
@@ -21,13 +21,13 @@ Built with **React + Vite + Tailwind CSS** on the front‑end and **Node.js�
 
 ```bash
 git clone <repo>
-cd backend          && npm i            # API deps
+cd api                   && npm i            # API deps
 cd ../notes-bookmarks-ui && npm i       # UI deps
 ```
 
 ### 2. Environment variables
 
-`backend/.env`
+`api/.env`
 
 ```env
 PORT=4000
@@ -44,7 +44,7 @@ VITE_API_URL=http://localhost:4000/api
 
 ```bash
 # terminal 1
-cd backend
+cd api
 npm run dev            # nodemon + MongoDB required
 
 # terminal 2
